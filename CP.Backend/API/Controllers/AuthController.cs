@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using API.Interfaces.Services;
 using API.Messages;
 using API.Models.Auth;
 using Microsoft.AspNetCore.Identity;
@@ -16,10 +17,12 @@ namespace API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
+        private readonly IEmailService _emailService;
 
-        public AuthController(UserManager<User> userManager)
+        public AuthController(UserManager<User> userManager, IEmailService emailService)
         {
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         [HttpPost("login")]
@@ -87,6 +90,52 @@ namespace API.Controllers
             };
 
             var isSuccessful = (await _userManager.CreateAsync(user, message.Password)).Succeeded;
+            if (!isSuccessful)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("requestpasswordreset")]
+        public async Task<IActionResult> RequestPasswordResetAsync(RequestPasswordReset message)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var user = await _userManager.FindByEmailAsync(message.Email);
+            if (user == null)
+            {
+                return Ok();
+            }
+
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            // TODO: Send Frontend link with UserId and ResetToken
+            _emailService.SendEmail(user.Email, "CP: Password Recovery", resetToken);
+
+            return Ok();
+        }
+
+        [HttpPost("resetpassword")]
+        public async Task<IActionResult> ResetPasswordAsync(ResetPassword message)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var user = await _userManager.FindByIdAsync(message.UserId);
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            var isSuccessful = (await _userManager.ResetPasswordAsync(user, message.ResetToken, message.NewPassword))
+                .Succeeded;
             if (!isSuccessful)
             {
                 return BadRequest();
