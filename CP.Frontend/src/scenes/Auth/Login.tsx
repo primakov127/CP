@@ -57,7 +57,7 @@ export const Login = () => {
 
         <LinksContainer>
           <Link to={'/auth/register'}>Haven't account?</Link>
-          <Link to={'/auth/register'}>Forgot password?</Link>
+          <Link to={'/auth/request-reset'}>Forgot password?</Link>
         </LinksContainer>
       </Form>
     </StyledDiv>

@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { authState } from '../../state';
 import { Login } from './Login';
 import { Register } from './Register';
+import { RequestPasswordReset } from './RequestPasswordReset';
 
 export const Auth = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export const Auth = () => {
     <Routes>
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
+      <Route path="request-reset" element={<RequestPasswordReset />} />
     </Routes>
   );
 };

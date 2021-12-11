@@ -3,6 +3,7 @@ import { getAxiosClient } from '../utils/getAxiosClient';
 import { LoginResult } from '../models/results/LoginResult';
 import { Register } from '../models/messages/Register';
 import { Result } from '../models/results/Result';
+import { RequestPasswordReset } from '../models/messages/RequestPasswordReset';
 
 const login = async (message: Login): Promise<LoginResult> => {
   try {
@@ -33,7 +34,22 @@ const register = async (message: Register): Promise<Result> => {
   }
 };
 
+const requestPasswordReset = async (message: RequestPasswordReset): Promise<Result> => {
+  try {
+    await getAxiosClient().post('/api/auth/requestpasswordreset', message);
+
+    return {
+      isSuccessful: true
+    };
+  } catch {
+    return {
+      isSuccessful: false
+    };
+  }
+};
+
 export const authService = {
   login,
-  register
+  register,
+  requestPasswordReset
 };
