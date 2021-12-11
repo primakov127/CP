@@ -12,3 +12,12 @@ services:
       - .:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+  frontend:
+    depends_on:
+      - db
+    build:
+      context: ./CP.Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
