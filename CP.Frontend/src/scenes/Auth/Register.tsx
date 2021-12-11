@@ -1,20 +1,45 @@
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, notification } from 'antd';
 import { UserOutlined, LockOutlined, MailOutlined, ContactsOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { authService } from '../../services/authService';
 
 export const Register = () => {
+  const [isRegistering, setIsRegistering] = useState(false);
+  const navigate = useNavigate();
   const [form] = Form.useForm();
+
+  const handleRegister = () => {
+    form
+      .validateFields()
+      .then(async (values) => {
+        setIsRegistering(true);
+        const result = await authService.register(values);
+        setIsRegistering(false);
+
+        if (result.isSuccessful) {
+          notification.success({
+            message: 'Success',
+            description: 'You were successful registered!'
+          });
+          navigate('/auth/login');
+        } else {
+          notification.error({
+            message: 'Error',
+            description: 'Email should be unique!'
+          });
+        }
+      })
+      .catch((_) => _);
+  };
 
   return (
     <StyledDiv>
       <Title>Sign Up</Title>
 
-      <Form
-        form={form}
-        onSubmitCapture={() => form.validateFields().then((values) => console.log(values))}
-      >
-        <Form.Item name="username" rules={[{ required: true, message: 'Please enter username' }]}>
+      <Form form={form} onSubmitCapture={handleRegister}>
+        <Form.Item name="userName" rules={[{ required: true, message: 'Please enter username' }]}>
           <Input placeholder="Username" prefix={<UserOutlined />} />
         </Form.Item>
 
@@ -64,7 +89,7 @@ export const Register = () => {
           <Input.Password placeholder="Password" prefix={<LockOutlined />} />
         </Form.Item>
 
-        <Button block type="primary" htmlType="submit">
+        <Button block type="primary" htmlType="submit" loading={isRegistering}>
           Sign Up
         </Button>
 
