@@ -1,49 +1,55 @@
 import { Button, Form, Input, notification } from 'antd';
-import { MailOutlined } from '@ant-design/icons';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { LockOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import { authService } from '../../services/authService';
-import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 
-export const RequestPasswordReset = () => {
+export const ResetPassword = () => {
+  const { userId } = useParams();
+  const [queryParams] = useSearchParams();
   const [isRequesting, setIsRequesting] = useState(false);
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
-  const handleRequestPasswordReset = () => {
+  const handleResetPassword = () => {
     form
       .validateFields()
       .then(async (values) => {
         setIsRequesting(true);
-        await authService.requestPasswordReset(values);
+        await authService.resetPassword({
+          userId: userId as string,
+          resetToken: queryParams.get('token') as string,
+          newPassword: values.password
+        });
         setIsRequesting(false);
 
-        notification.success({ message: 'Success', description: 'Check your email!' });
+        notification.success({ message: 'Success', description: 'Your password was changed!' });
         navigate('/auth/login');
       })
       .catch((_) => _);
   };
 
+  useEffect(() => {
+    if (!queryParams.get('token')) {
+      navigate('/auth/login');
+    }
+  }, [queryParams, navigate]);
+
   return (
     <StyledDiv>
       <Title>Password Reset</Title>
 
-      <Form form={form} onSubmitCapture={handleRequestPasswordReset}>
+      <Form form={form} onSubmitCapture={handleResetPassword}>
         <Form.Item
-          name="email"
-          rules={[
-            { required: true, message: 'Please enter email' },
-            {
-              pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-              message: 'Please enter correct email: example@gmail.com'
-            }
-          ]}
+          name="password"
+          rules={[{ required: true, min: 3, message: 'Please enter min 3 length password' }]}
         >
-          <Input placeholder="Enter your email" prefix={<MailOutlined />} />
+          <Input.Password placeholder="Enter your new password" prefix={<LockOutlined />} />
         </Form.Item>
 
         <Button block type="primary" htmlType="submit" loading={isRequesting}>
-          Send Email
+          Change password
         </Button>
 
         <LinksContainer>

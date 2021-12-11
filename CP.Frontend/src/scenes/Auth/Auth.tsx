@@ -5,6 +5,7 @@ import { authState } from '../../state';
 import { Login } from './Login';
 import { Register } from './Register';
 import { RequestPasswordReset } from './RequestPasswordReset';
+import { ResetPassword } from './ResetPassword';
 
 export const Auth = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ export const Auth = () => {
       <Route path="login" element={<Login />} />
       <Route path="register" element={<Register />} />
       <Route path="request-reset" element={<RequestPasswordReset />} />
+      <Route path="reset-password/userId/:userId" element={<ResetPassword />} />
     </Routes>
   );
 };

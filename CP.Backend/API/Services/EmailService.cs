@@ -22,7 +22,11 @@ namespace API.Services
         
         public void SendEmail(string recipientEmail, string subject, string message)
         {
-            _smtpClient.Send(_fromEmail, recipientEmail, subject, message);
+            var mailMessage = new MailMessage(_fromEmail, recipientEmail, subject, message);
+            mailMessage.IsBodyHtml = true;
+            
+            _smtpClient.Send(mailMessage);
+            
         }
     }
 }

@@ -4,6 +4,7 @@ import { LoginResult } from '../models/results/LoginResult';
 import { Register } from '../models/messages/Register';
 import { Result } from '../models/results/Result';
 import { RequestPasswordReset } from '../models/messages/RequestPasswordReset';
+import { ResetPassword } from '../models/messages/ResetPassword';
 
 const login = async (message: Login): Promise<LoginResult> => {
   try {
@@ -48,8 +49,23 @@ const requestPasswordReset = async (message: RequestPasswordReset): Promise<Resu
   }
 };
 
+const resetPassword = async (message: ResetPassword): Promise<Result> => {
+  try {
+    await getAxiosClient().post('/api/auth/resetpassword', message);
+
+    return {
+      isSuccessful: true
+    }
+  } catch {
+    return {
+      isSuccessful: false
+    }
+  }
+}
+
 export const authService = {
   login,
   register,
-  requestPasswordReset
+  requestPasswordReset,
+  resetPassword
 };

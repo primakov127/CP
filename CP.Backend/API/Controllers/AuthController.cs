@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using API.Interfaces.Services;
 using API.Messages;
 using API.Models.Auth;
@@ -113,9 +114,10 @@ namespace API.Controllers
             }
 
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedResetToken = HttpUtility.UrlEncode(resetToken);
 
-            // TODO: Send Frontend link with UserId and ResetToken
-            _emailService.SendEmail(user.Email, "CP: Password Recovery", resetToken);
+            _emailService.SendEmail(user.Email, "CP: Password Recovery",
+                $"<a href='http://localhost:3000/auth/reset-password/userId/{user.Id.ToString()}?token={encodedResetToken}'>Reset password</a>");
 
             return Ok();
         }
