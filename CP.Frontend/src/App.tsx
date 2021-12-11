@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { RecoilRoot } from 'recoil';
+import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
+import { Auth } from './scenes/Auth/Auth';
+import { Events } from './scenes/Events/Events';
+import { Layout } from 'antd';
+import styled from 'styled-components';
 
-function App() {
+const { Content } = Layout;
+
+export const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <RecoilRoot>
+      <Router>
+        <Layout style={{ minHeight: '100%' }}>
+          <ContentContainer>
+            <Routes>
+              <Route path="auth/*" element={<Auth />} />
+              <Route path="events/*" element={<Events />} />
+              <Route path="/" element={<Navigate replace to="/events" />} />
+            </Routes>
+          </ContentContainer>
+        </Layout>
+      </Router>
+    </RecoilRoot>
   );
-}
+};
 
-export default App;
+const ContentContainer = styled(Content)`
+  padding: 0 50px;
+`;
