@@ -72,7 +72,7 @@ export const Add = () => {
     if (start && end) {
       form.setFields([{ name: 'range', value: [moment(start), moment(end)] }]);
     }
-  }, [queryParams]);
+  }, [queryParams, form]);
 
   return (
     <StyledDiv>
