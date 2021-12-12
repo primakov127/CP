@@ -43,7 +43,6 @@ namespace API.Controllers
             return Ok(events);
         }
 
-        // TODO: Change returned model, create GetResult model
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
@@ -90,8 +89,8 @@ namespace API.Controllers
                 var user = await _userManager.FindByIdAsync(id);
                 if (user != null)
                 {
-                    // TODO: Return link to the Frontend Event page
-                    _emailService.SendEmail(user.Email, $"Event: {newEvent.Title}", "You were invited to the event");
+                    _emailService.SendEmail(user.Email, $"Event: {newEvent.Title}",
+                        $"You were invited to the <a href='http://localhost:3000/events/{newEvent.Id.ToString()}'>Event</a>");
                 }
             }
 
@@ -119,24 +118,24 @@ namespace API.Controllers
             {
                 return BadRequest();
             }
-            
+
             // Notify new attendees
             var newAttendeesIds = message.UserIds.Except(currentAttendeesIds);
-            
+
             foreach (var id in newAttendeesIds)
             {
                 var user = await _userManager.FindByIdAsync(id);
                 if (user != null)
                 {
-                    // TODO: Return link to the Frontend Event page
-                    _emailService.SendEmail(user.Email, $"Event: {currentEvent.Title}", "You were invited to the event");
+                    _emailService.SendEmail(user.Email, $"Event: {currentEvent.Title}",
+                        $"You were invited to the <a href='http://localhost:3000/events/{currentEvent.Id.ToString()}'>Event</a>");
                 }
             }
-            
+
             return Ok();
         }
 
-        [HttpDelete("remove")]
+        [HttpPost("remove")]
         public async Task<IActionResult> Remove(Remove message)
         {
             var isSuccessgul = _eventService.Delete(Guid.Parse(message.Id));

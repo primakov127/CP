@@ -6,11 +6,15 @@ import { authService } from '../../services/authService';
 import { useSetRecoilState } from 'recoil';
 import { authState } from '../../state';
 import { useState } from 'react';
+import { userState } from '../../state/user';
+import jwt_decode from 'jwt-decode';
+import { User } from '../../models/User';
 
 export const Login = () => {
   const [isLogining, setIsLogining] = useState(false);
   const navigate = useNavigate();
   const setAuth = useSetRecoilState(authState);
+  const setUser = useSetRecoilState(userState);
   const [form] = Form.useForm();
 
   const handleLogin = () => {
@@ -25,8 +29,15 @@ export const Login = () => {
         setIsLogining(false);
 
         if (result.isSuccessful) {
+          const user: User = jwt_decode(result.token as string);
+
           localStorage.setItem('token', result.token as string);
           setAuth(result.token as string);
+          setUser(user);
+          notification.success({
+            message: 'Success',
+            description: `You are logged in as ${user.userName}!`
+          });
           navigate('/events');
         } else {
           notification.error({
