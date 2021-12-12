@@ -35,5 +35,5 @@ export const List = () => {
 };
 
 const CalendarContainer = styled.div`
-  height: 600px;
+  height: 800px;
 `;

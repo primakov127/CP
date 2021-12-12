@@ -7,7 +7,7 @@ import {
   LogoutOutlined
 } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useMatch, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { authState } from '../state';
@@ -20,11 +20,16 @@ export const MainMenu = () => {
   const [auth, setAuth] = useRecoilState(authState);
   const user = useRecoilValue(userState);
   const [displayMenu, setDisplayMenu] = useState(false);
-  const [currentLink, setCurrentLink] = useState('/events/list');
+  const match = useMatch('/*');
+  const [currentLink, setCurrentLink] = useState(match?.pathname ?? '/events/list');
 
   useEffect(() => {
     auth ? setDisplayMenu(true) : setDisplayMenu(false);
   }, [auth]);
+
+  useEffect(() => {
+    setCurrentLink(match?.pathname ?? '/events/list');
+  }, [match]);
 
   const handleMenuClick = (e: any) => {
     const key = e.key;
@@ -49,7 +54,7 @@ export const MainMenu = () => {
       <Menu.Item key="/events/add" icon={<PlusSquareOutlined />}>
         Add Event
       </Menu.Item>
-      <SubMenu icon={<UserOutlined />} title={user.userName}>
+      <SubMenu icon={<UserOutlined style={{ color: '#a0d911' }} />} title={user.userName}>
         <Menu.Item key="/profile" icon={<ProfileOutlined />}>
           Profile
         </Menu.Item>
