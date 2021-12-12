@@ -4,6 +4,7 @@ import { Auth } from './scenes/Auth/Auth';
 import { Events } from './scenes/Events/Events';
 import { Layout } from 'antd';
 import styled from 'styled-components';
+import { MainMenu } from './components/MainMenu';
 
 const { Content } = Layout;
 
@@ -11,7 +12,8 @@ export const App = () => {
   return (
     <RecoilRoot>
       <Router>
-        <Layout style={{ minHeight: '100%' }}>
+        <Layout style={{ minHeight: '100%', background: 'white' }}>
+          <MainMenu />
           <ContentContainer>
             <Routes>
               <Route path="auth/*" element={<Auth />} />
