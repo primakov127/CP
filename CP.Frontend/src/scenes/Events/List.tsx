@@ -6,11 +6,21 @@ import moment from 'moment';
 import styled from 'styled-components';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { useNavigate } from 'react-router-dom';
 
 const localizer = momentLocalizer(moment);
 
 export const List = () => {
+  const navigate = useNavigate();
   const [events, setEvents] = useState<Event[]>([]);
+
+  const handleSelectEvent = (event: { id: string }) => {
+    navigate(`/events/${event.id}`);
+  };
+
+  const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
+    navigate(`/events/add?start=${start.toISOString()}&end=${end.toISOString()}`);
+  };
 
   useEffect(() => {
     eventService
@@ -27,8 +37,8 @@ export const List = () => {
         selectable
         events={events}
         localizer={localizer}
-        onSelectEvent={(e) => console.log(e)}
-        onSelectSlot={(s) => console.log(s)}
+        onSelectEvent={handleSelectEvent}
+        onSelectSlot={handleSelectSlot as any}
       />
     </CalendarContainer>
   );

@@ -1,7 +1,7 @@
 import { Button, DatePicker, Form, Input, notification, Select, Switch } from 'antd';
-import { Moment } from 'moment';
+import moment, { Moment } from 'moment';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { CreateEvent } from '../../models/messages/CreateEvent';
@@ -11,6 +11,7 @@ import { userState } from '../../state/user';
 
 export const Add = () => {
   const navigate = useNavigate();
+  const [queryParams] = useSearchParams();
   const user = useRecoilValue(userState);
   const [isAdding, setIsAdding] = useState(false);
   const [isAllDayEvent, setIsAllDayEvent] = useState(false);
@@ -19,6 +20,9 @@ export const Add = () => {
 
   const handleAllDayToggleChange = (isAllDay: boolean) => {
     setIsAllDayEvent(isAllDay);
+    if (form.getFieldValue('range')) {
+      form.setFields([{ name: 'range', value: isAllDay ? form.getFieldValue('range')[0] : [] }]);
+    }
   };
 
   const handleCreate = () => {
@@ -45,7 +49,7 @@ export const Add = () => {
         setIsAdding(false);
 
         if (result.isSuccessful) {
-          notification.success({ message: 'Success', description: 'Event is created!' });
+          notification.success({ message: 'Success', description: 'Event was created!' });
         } else {
           notification.error({ message: 'Error', description: 'Something went wrong...' });
         }
@@ -60,6 +64,15 @@ export const Add = () => {
       .getUsers()
       .then((result) => setUsers(result.users?.filter((u) => u.userId !== user.userId) as any));
   }, [user]);
+
+  useEffect(() => {
+    const start = queryParams.get('start');
+    const end = queryParams.get('end');
+
+    if (start && end) {
+      form.setFields([{ name: 'range', value: [moment(start), moment(end)] }]);
+    }
+  }, [queryParams]);
 
   return (
     <StyledDiv>

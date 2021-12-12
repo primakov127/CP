@@ -5,6 +5,10 @@ export type Event = {
   start: Date;
   end: Date;
   allDay: false;
-  details: null;
-  attendees: null;
+  details: {
+    description: string;
+  };
+  attendees: Array<{
+    userId: string;
+  }>;
 };
