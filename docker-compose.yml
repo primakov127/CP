@@ -2,6 +2,7 @@ version: "3.9"
 services:
   db:
     image: postgres:13.3
+    container_name: dbserver
     environment:
       POSTGRES_DB: "defaultdb"
       POSTGRES_USER: "primakov127"
@@ -13,9 +14,20 @@ services:
     ports:
       - "5432:5432"
 
-  frontend:
+  backend:
     depends_on:
       - db
+    build:
+      context: ./CP.Backend
+      dockerfile: Dockerfile
+    links:
+      - dbserver
+    ports:
+      - "5000:5000"
+
+  frontend:
+    depends_on:
+      - backend
     build:
       context: ./CP.Frontend
       dockerfile: Dockerfile
