@@ -5,6 +5,7 @@ import { Events } from './scenes/Events/Events';
 import { Layout } from 'antd';
 import styled from 'styled-components';
 import { MainMenu } from './components/MainMenu';
+import { Profile } from './scenes/Profile/Profile';
 
 const { Content } = Layout;
 
@@ -18,6 +19,7 @@ export const App = () => {
             <Routes>
               <Route path="auth/*" element={<Auth />} />
               <Route path="events/*" element={<Events />} />
+              <Route path="profile" element={<Profile />} />
               <Route path="/" element={<Navigate replace to="/events" />} />
             </Routes>
           </ContentContainer>
